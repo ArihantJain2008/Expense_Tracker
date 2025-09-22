@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    canvas {
+      max-width: 600px;
+      margin: auto;
+    }
+    .filters {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    select {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: white;
+      background: #222E9B;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+    a:hover {
+      background: #1a227a;
+    }
+    #noDataMsg {
+      margin-top: 40px;
+      font-size: 18px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h2>Spending Report</h2>
+
+  <div class="filters">
+    <select id="yearFilter"></select>
+    <select id="monthFilter">
+      <option value="All">All Months</option>
+      <option value="January">January</option>
+      <option value="February">February</option>
+      <option value="March">March</option>
+      <option value="April">April</option>
+      <option value="May">May</option>
+      <option value="June">June</option>
+      <option value="July">July</option>
+      <option value="August">August</option>
+      <option value="September">September</option>
+      <option value="October">October</option>
+      <option value="November">November</option>
+      <option value="December">December</option>
+    </select>
+    <select id="dayFilter"></select>
+  </div>
+
+  <canvas id="categoryChart"></canvas>
+  <div id="noDataMsg" style="display:none;">No transactions available for the selected filters.</div>
+  <a href="index.html">⬅ Back to Tracker</a>
+
+  <script>
+    // ---------- Load or Initialize Data ----------
+    let saved = localStorage.getItem("expenseData");
+    let data = saved ? JSON.parse(saved) : {};
+
+    if (!saved || Object.keys(data).length === 0) {
+      const testData = {
+        "January": {
+          "transactions": [
+            { "desc": "Food", "amount": 500, "day": 5, "month": "January", "year": 2025 },
+            { "desc": "Transport", "amount": 200, "day": 6, "month": "January", "year": 2025 },
+            { "desc": "Entertainment", "amount": 300, "day": 7, "month": "January", "year": 2025 }
+          ]
+        },
+        "February": {
+          "transactions": [
+            { "desc": "Food", "amount": 400, "day": 2, "month": "February", "year": 2025 }
+          ]
+        }
+      };
+      localStorage.setItem("expenseData", JSON.stringify(testData));
+      data = testData;
+    }
+
+    const yearFilter = document.getElementById("yearFilter");
+    const monthFilter = document.getElementById("monthFilter");
+    const dayFilter = document.getElementById("dayFilter");
+    const noDataMsg = document.getElementById("noDataMsg");
+    let chart;
+
+    // ---------- Populate Years (All years up to now) ----------
+    function populateYears() {
+      const currentYear = new Date().getFullYear();
+      let options = '<option value="All">All</option>';
+      for (let y = 2000; y <= currentYear; y++) {
+        options += `<option value="${y}">${y}</option>`;
+      }
+      yearFilter.innerHTML = options;
+      yearFilter.value = "All";
+    }
+
+    // ---------- Populate Days (1–31) ----------
+    function populateDays() {
+      let options = '<option value="All">All</option>';
+      for (let d = 1; d <= 31; d++) {
+        options += `<option value="${d}">${d}</option>`;
+      }
+      dayFilter.innerHTML = options;
+      dayFilter.value = "All";
+    }
+
+    // ---------- Filter Transactions ----------
+    function getFilteredTransactions() {
+      let transactions = [];
+      for (let month in data) {
+        if (!data[month].transactions) continue;
+        data[month].transactions.forEach(t => {
+          let match = true;
+          if (yearFilter.value !== "All" && t.year != yearFilter.value) match = false;
+          if (monthFilter.value !== "All" && t.month !== monthFilter.value) match = false;
+          if (dayFilter.value !== "All" && t.day != dayFilter.value) match = false;
+          if (match) transactions.push(t);
+        });
+      }
+      return transactions;
+    }
+
+    // ---------- Update Chart ----------
+    function updateChart() {
+      const transactions = getFilteredTransactions();
+      if (transactions.length === 0) {
+        if (chart) chart.destroy();
+        noDataMsg.style.display = "block";
+        return;
+      } else {
+        noDataMsg.style.display = "none";
+      }
+
+      let categoryTotals = {};
+      transactions.forEach(t => {
+        if (!categoryTotals[t.desc]) categoryTotals[t.desc] = 0;
+        categoryTotals[t.desc] += t.amount;
+      });
+
+      const ctx = document.getElementById("categoryChart").getContext("2d");
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: Object.keys(categoryTotals),
+          datasets: [{
+            label: "Total Spent",
+            data: Object.values(categoryTotals),
+            backgroundColor: [
+              "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0",
+              "#9966FF", "#FF9F40", "#2ECC71", "#E67E22"
+            ],
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom" },
+            title: {
+              display: true,
+              text: "Spending by Category"
+            }
+          }
+        }
+      });
+    }
+
+    // ---------- Event Listeners ----------
+    yearFilter.addEventListener("change", updateChart);
+    monthFilter.addEventListener("change", updateChart);
+    dayFilter.addEventListener("change", updateChart);
+
+    // ---------- Initialize ----------
+    populateYears();
+    populateDays();
+    updateChart();
+  </script>
+</body>
+</html>

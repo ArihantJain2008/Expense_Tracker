@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="index.js"></script>
+</head>
+<body>
+  <div class="budget_box">
+    <div class="selectors">
+      <select id="yearSelect"></select>
+      <select id="monthSelect">
+        <option value="January">January</option>
+        <option value="February">February</option>
+        <option value="March">March</option>
+        <option value="April">April</option>
+        <option value="May">May</option>
+        <option value="June">June</option>
+        <option value="July">July</option>
+        <option value="August">August</option>
+        <option value="September">September</option>
+        <option value="October">October</option>
+        <option value="November">November</option>
+        <option value="December">December</option>
+      </select>
+      <select id="daySelect"></select>
+    </div>
+
+    <div class="budget_section">
+      <div class="budget_display">
+        <div class="budget_info">
+          <h3>Remaining budget</h3>
+          <h2 id="amount">₹0</h2>
+        </div>
+        <div class="budget_controls">
+          <input type="number" id="setBudget" placeholder="Enter monthly budget">
+          <button id="setBudgetBtn">Set Budget</button>
+        </div>
+      </div>
+      <div class="progress_container">
+        <div class="progress_bar" id="progress"></div>
+      </div>
+    </div>
+
+    <div class="report">
+      <center><a href="report.html"><button type="submit">Report</button></a></center>
+    </div>
+  </div>
+
+  <div class="transactions">
+    <h3>Transactions</h3>
+    <div class="transaction_input">
+      <input type="text" id="desc" placeholder="Description">
+      <input type="number" id="amountInput" placeholder="Enter amount">
+      <button id="addBtn">Add</button>
+    </div>
+    <ul id="transactionList"></ul>
+  </div>
+
+  <div class="add_money">
+    <button id="addMoneyBtn">+ Add Money</button>
+  </div>

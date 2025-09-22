@@ -1,0 +1,259 @@
+/* ---------- Global Styles ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100%;
+  background: #111;
+  font-family: Arial, sans-serif;
+  color: white;
+  padding-bottom: 100px; /* avoid overlap with floating button */
+}
+
+/* ---------- Budget Box ---------- */
+.budget_box {
+  background-color: #222E9B;
+  padding: 15px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+/* ---------- Selectors Row ---------- */
+.selectors {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.selectors select {
+  border-radius: 15px;
+  height: 35px;
+  width: 100px;
+  border: none;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ---------- Budget Section ---------- */
+.budget_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.budget_display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  flex-wrap: wrap;
+}
+
+#amount {
+  color: #00FF7F;
+  font-size: 1.5rem;
+}
+
+/* ---------- Budget Controls ---------- */
+.budget_controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.budget_controls input,
+.budget_controls button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+.budget_controls button {
+  background: #1a227a;
+  color: white;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+}
+
+.budget_controls button:hover {
+  background: #0f1650;
+}
+
+/* ---------- Progress Bar ---------- */
+.progress_container {
+  width: 90%;
+  height: 15px;
+  background: #ddd;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.progress_bar {
+  height: 100%;
+  width: 0%;
+  background: #00FF7F;
+  transition: width 0.3s ease;
+}
+
+.progress_bar.danger {
+  background: #ff4444;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scaleX(1); }
+  50% { transform: scaleX(1.02); }
+  100% { transform: scaleX(1); }
+}
+
+/* ---------- Transactions ---------- */
+.transactions {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.transaction_input {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px auto;
+  flex-wrap: wrap;
+}
+
+.transaction_input input {
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 120px;
+}
+
+#addBtn {
+  padding: 6px 12px;
+  border: none;
+  background-color: #222E98;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#addBtn:hover {
+  background: #1a227a;
+}
+
+#transactionList {
+  width: 90%;
+  margin: 15px auto;
+  list-style: none;
+  padding: 0;
+}
+
+#transactionList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 0;
+  padding: 8px;
+  border-radius: 6px;
+  background: #f2f2f2;
+  color: black;
+  font-size: 0.9rem;
+}
+
+#transactionList li button {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ---------- Floating Button ---------- */
+#addMoneyBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: #28a745;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+}
+
+#addMoneyBtn:hover {
+  background: #218838;
+}
+
+/* ---------- Report Button ---------- */
+.report button {
+  margin-top: 20px;
+  color: white;
+  background: #222E9B;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.report button:hover {
+  background: #1a227a;
+}
+
+/* ---------- Mobile Responsiveness ---------- */
+@media (max-width: 480px) {
+  .selectors select {
+    width: 80px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+
+  .budget_display {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .budget_controls input {
+    width: 100px;
+  }
+
+  .budget_controls button {
+    width: 100px;
+  }
+
+  .transaction_input input {
+    width: 90px;
+    font-size: 0.8rem;
+  }
+
+  #transactionList {
+    width: 95%;
+  }
+
+  #addMoneyBtn {
+    width: 55px;
+    height: 55px;
+    font-size: 20px;
+  }
+
+  .report button {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+}
