@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savings Goals</title>
+  <link rel="stylesheet" href="savings.css">
+  <script defer src="savings.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+</head>
+<style>
+    /* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #dff9fb, #c7ecee);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+header h2 {
+  margin: 0;
+}
+
+header button {
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.goals-container {
+  padding: 20px;
+  flex: 1;
+}
+
+/* Goal Card */
+.goal-card {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  color: white;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.goal-card:nth-child(2) {
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+}
+
+.goal-card h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.goal-card p {
+  margin: 5px 0;
+  font-size: 1rem;
+}
+
+.progress-circle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 5px solid rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Footer */
+footer {
+  background: #222;
+  padding: 10px 0;
+  text-align: center;
+  margin-top: auto;
+}
+
+
+
+footer button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
+.report button {
+  margin-top: 20px;
+  color: white;
+  background: #157732;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+
+footer{
+  position:relative;
+  margin-top:28%;
+  margin-bottom:-100px;
+  display:flex;
+  justify-content:space-around;
+  background-color: #222E9B;
+  padding: 5px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+</style>
+<body>
+  <header>
+    <h2>Saving Goals</h2>
+    <button id="addGoalBtn"><i class="fa-solid fa-plus"></i></button>
+  </header>
+
+  <div class="goals-container" id="goalsContainer">
+    <!-- Goals will be inserted dynamically -->
+  </div>
+
+  <footer>
+    <div class="report">
+      <a href="index.html"><button><i class="fa-solid fa-house"></i></button></a>
+      <a href="report.html"><button><i class="fa-solid fa-chart-column"></i></button></a>
+      <a href="badge.html"><button><i class="fa-solid fa-ribbon"></i></button></a>
+      <a href="savings.html"><button><i class="fa-solid fa-piggy-bank"></i></button></a>
+    </div>
+  </footer>
+
+  <script>
+    const goalsContainer = document.getElementById("goalsContainer");
+const addGoalBtn = document.getElementById("addGoalBtn");
+
+let goals = JSON.parse(localStorage.getItem("savingsGoals")) || [
+  { name: "Laptop", target: 60000, saved: 30000 },
+  { name: "Bike", target: 35000, saved: 18000 }
+];
+
+function renderGoals() {
+  goalsContainer.innerHTML = "";
+  goals.forEach((goal, index) => {
+    const percentage = Math.min(((goal.saved / goal.target) * 100).toFixed(0), 100);
+
+    const goalCard = document.createElement("div");
+    goalCard.classList.add("goal-card");
+    goalCard.innerHTML = `
+      <h3>${goal.name.toUpperCase()}</h3>
+      <p>Target: ₹${goal.target.toLocaleString()}</p>
+      <p>Saved: ₹${goal.saved.toLocaleString()}</p>
+      <div class="progress-circle">${percentage}%</div>
+      <div style="margin-top:10px;">
+        <input type="number" id="saveInput-${index}" placeholder="Add amount" style="width:100px;padding:5px;border-radius:6px;border:1px solid #ccc;">
+        <button onclick="addSaving(${index})" style="padding:5px 10px;margin-left:5px;border:none;border-radius:6px;background:#fff;color:#000;cursor:pointer;">Save</button>
+      </div>
+      <button onclick="deleteGoal(${index})" style="margin-top:10px;background:#fff;color:#000;padding:5px 10px;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+    `;
+    goalsContainer.appendChild(goalCard);
+  });
+
+  localStorage.setItem("savingsGoals", JSON.stringify(goals));
+}
+
+function addSaving(index) {
+  const input = document.getElementById(`saveInput-${index}`);
+  const amount = parseInt(input.value, 10);
+  if (!isNaN(amount) && amount > 0) {
+    goals[index].saved += amount;
+    input.value = "";
+    renderGoals();
+  } else {
+    alert("Enter a valid amount to save!");
+  }
+}
+
+function deleteGoal(index) {
+  goals.splice(index, 1);
+  renderGoals();
+}
+
+addGoalBtn.addEventListener("click", () => {
+  const name = prompt("Enter goal name:");
+  const target = parseInt(prompt("Enter target amount (₹):"), 10);
+  if (name && target) {
+    goals.push({ name, target, saved: 0 });
+    renderGoals();
+  }
+});
+
+renderGoals();
+
+
+  </script>
+</body>
+</html>

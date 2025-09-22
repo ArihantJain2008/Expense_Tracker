@@ -4,13 +4,18 @@
   padding: 0;
   box-sizing: border-box;
 }
-
+html , body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
 body {
   height: 100%;
   background: #111;
   font-family: Arial, sans-serif;
   color: white;
-  padding-bottom: 100px; /* avoid overlap with floating button */
+  padding-bottom: 100px; /* avoid overlap with floating button */ 
 }
 
 /* ---------- Budget Box ---------- */
@@ -181,7 +186,7 @@ body {
 /* ---------- Floating Button ---------- */
 #addMoneyBtn {
   position: fixed;
-  bottom: 20px;
+  bottom: 100px;
   right: 20px;
   width: 60px;
   height: 60px;
@@ -203,7 +208,7 @@ body {
 .report button {
   margin-top: 20px;
   color: white;
-  background: #222E9B;
+  background: #157732;
   padding: 10px 20px;
   border-radius: 8px;
   border: none;
@@ -211,7 +216,7 @@ body {
 }
 
 .report button:hover {
-  background: #1a227a;
+  background: #157732;
 }
 
 /* ---------- Mobile Responsiveness ---------- */
@@ -256,4 +261,21 @@ body {
     width: 100%;
     font-size: 0.9rem;
   }
+}
+footer{
+  position:relative;
+  margin-top:28%;
+  margin-bottom:-100px;
+  display:flex;
+  justify-content:space-around;
+  background-color: #222E9B;
+  padding: 5px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+footer {
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  margin-top: auto;   /* Pushes footer to bottom */
 }
