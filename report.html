@@ -50,6 +50,23 @@
       font-size: 18px;
       color: #555;
     }
+    #compareBtn {
+      margin-top: 20px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #222E9B;
+      color: white;
+      cursor: pointer;
+    }
+    #compareBtn:hover {
+      background: #1a227a;
+    }
+    #compareResult {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
@@ -77,6 +94,9 @@
 
   <canvas id="categoryChart"></canvas>
   <div id="noDataMsg" style="display:none;">No transactions available for the selected filters.</div>
+
+  <button id="compareBtn">Compare with Previous Month</button>
+  <div id="compareResult"></div>
 
   <script>
     // ---------- Load or Initialize Data ----------
@@ -106,9 +126,11 @@
     const monthFilter = document.getElementById("monthFilter");
     const dayFilter = document.getElementById("dayFilter");
     const noDataMsg = document.getElementById("noDataMsg");
+    const compareBtn = document.getElementById("compareBtn");
+    const compareResult = document.getElementById("compareResult");
     let chart;
 
-    // ---------- Populate Years (All years up to now) ----------
+    // ---------- Populate Years ----------
     function populateYears() {
       const currentYear = new Date().getFullYear();
       let options = '<option value="All">All</option>';
@@ -119,7 +141,7 @@
       yearFilter.value = "All";
     }
 
-    // ---------- Populate Days (1–31) ----------
+    // ---------- Populate Days ----------
     function populateDays() {
       let options = '<option value="All">All</option>';
       for (let d = 1; d <= 31; d++) {
@@ -191,10 +213,55 @@
       });
     }
 
+    // ---------- Compare with Previous Month ----------
+    function compareWithPrevious() {
+      const monthsOrder = [
+        "January","February","March","April","May","June",
+        "July","August","September","October","November","December"
+      ];
+
+      const selectedMonth = monthFilter.value;
+      if (selectedMonth === "All") {
+        compareResult.innerHTML = "<p>Please select a month to compare.</p>";
+        return;
+      }
+
+      const selectedIndex = monthsOrder.indexOf(selectedMonth);
+      if (selectedIndex <= 0) {
+        compareResult.innerHTML = "<p>No previous month available to compare.</p>";
+        return;
+      }
+
+      const prevMonth = monthsOrder[selectedIndex - 1];
+      const selectedData = data[selectedMonth]?.transactions || [];
+      const prevData = data[prevMonth]?.transactions || [];
+
+      const selectedTotal = selectedData.reduce((sum, t) => sum + t.amount, 0);
+      const prevTotal = prevData.reduce((sum, t) => sum + t.amount, 0);
+
+      if (selectedTotal === 0 && prevTotal === 0) {
+        compareResult.innerHTML = "<p>No data available for comparison.</p>";
+        return;
+      }
+
+      const diff = selectedTotal - prevTotal;
+      const percentage = prevTotal > 0 ? ((diff / prevTotal) * 100).toFixed(2) : "N/A";
+
+      compareResult.innerHTML = `
+        <h3>📊 Comparison</h3>
+        <p>${prevMonth}: ₹${prevTotal}</p>
+        <p>${selectedMonth}: ₹${selectedTotal}</p>
+        <p style="color:${diff > 0 ? 'red' : 'green'};">
+          ${diff > 0 ? "↑ Spent more" : "↓ Spent less"} by ₹${Math.abs(diff)} (${percentage}%)
+        </p>
+      `;
+    }
+
     // ---------- Event Listeners ----------
     yearFilter.addEventListener("change", updateChart);
     monthFilter.addEventListener("change", updateChart);
     dayFilter.addEventListener("change", updateChart);
+    compareBtn.addEventListener("click", compareWithPrevious);
 
     // ---------- Initialize ----------
     populateYears();
@@ -204,10 +271,10 @@
 
   <footer>
     <div class="report">
-      <a href="index.html"><button type="button"><i class="fa-solid fa-house"></button></i></a>
-        <a href="report.html"><button type="button"><i class="fa-solid fa-chart-column"></i></button></a>
-        <a href="badge.html"><button type="button"><i class="fa-solid fa-ribbon"></i></button></a>
-        <a href="savings.html"><button type="button"><i class="fa-solid fa-piggy-bank"></i></button></i></a>
+      <a href="index.html"><button type="button"><i class="fa-solid fa-house"></i></button></a>
+      <a href="report.html"><button type="button"><i class="fa-solid fa-chart-column"></i></button></a>
+      <a href="badge.html"><button type="button"><i class="fa-solid fa-ribbon"></i></button></a>
+      <a href="savings.html"><button type="button"><i class="fa-solid fa-piggy-bank"></i></button></a>
     </div>
   </footer>
 </body>
